@@ -42,7 +42,7 @@ class CarModel(models.Model):
                 " Make Name: "+ self.make.name + \
                 " Type: " + self.c_type + \
                 " Dealer ID: " + self.dealer_id+ \
-                " Year: " + self.year +
+                " Year: " + self.year
                 
 
 
