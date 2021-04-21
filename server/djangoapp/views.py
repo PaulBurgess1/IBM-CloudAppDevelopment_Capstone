@@ -114,8 +114,9 @@ def get_dealerships(request):
 # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
 def get_dealer_details(request, dealer_id):
-    url = "https://08663624.us-south.apigw.appdomain.cloud/api/reviews"
+    url = "https://08663624.us-south.apigw.appdomain.cloud/api/review"
     apikey="_xKRLnH-xVpGqx9u0VBB3dZUTVxhZ8JNVyxYY6ooCjB2"
+    #print(dealer_id)
     # Get dealers from the URL
     dealer_details = get_dealer_reviews_from_cf(url,dealer_id)
     return HttpResponse(dealer_details)

@@ -1,5 +1,6 @@
 import requests
 import json
+
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
 
@@ -12,14 +13,15 @@ def get_request(url, **kwargs):
     print("GET from {} ".format(url))
     json_data={}
     try:
-        if "api_key" in kwargs:
-            response = requests.get(url, headers={'Content-Type':'application/json'}, params=kwargs, auth=HTTPBasicAuth(apikey, kwargs["api_key"]))
+        if "apikey" in kwargs:
+            response = requests.get(url, headers={'Content-Type':'application/json'}, params=kwargs, auth=HTTPBasicAuth("apikey", kwargs["apikey"]))
         else:
             response = requests.get(url, headers={'Content-Type':'application/json'}, params=kwargs)
 
         status_code = response.status_code
         print("With status {} ".format(status_code))
         json_data = json.loads(response.text)
+        #print(json_data)
     except Exception as e:
         print("Error " ,e)
     
@@ -74,8 +76,8 @@ def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url, dealerId=dealer_id)
-    print(json_result)
-    if json_result and json_result["status"] == 200:
+    
+    if "entries" in json_result:
         reviews = json_result["entries"]
         # For each review object
         for review in reviews:
@@ -88,17 +90,25 @@ def get_dealer_reviews_from_cf(url, dealer_id):
                 car_make=review["car_make"],
                 car_model=review["car_model"],
                 car_year=review["car_year"],
-                sentiment=review["sentiment"],
+                sentiment=analyze_review_sentiments(review["review"]),
                 id=review['id']
                 )
             results.append(review_obj)
-
+    #print(results[0])
     return results
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
-
-
-
+def analyze_review_sentiments(dealerreview, **kwargs):
+    API_KEY="WbXok1AVEWObyUaG939TGwSk6NfCSwrw42-lSw62ETmz"
+    #API_KEY="0614ccd0-1e9f-4d49-923e-e7741f963747:Q3ZX2R1b3oBEb0XebEO99rpulJ31yoY7X5GfjoQykN4RpM9eThYrrs14If0aOHtG"
+    URL="https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/fc2b8a7f-4e6b-4f85-83af-5ef1506cad53"
+    response = get_request(URL,text=dealerreview, version="2020-08-01", features="sentiment",apikey=API_KEY)
+    
+    print(response)
+    if "label" in response:
+        return response["label"]
+    else:
+        return "Unknown"
