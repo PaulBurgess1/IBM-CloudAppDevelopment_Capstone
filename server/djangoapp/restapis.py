@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
 def get_request(url, **kwargs):
-    print(kwargs)
+    #print(kwargs)
     print("GET from {} ".format(url))
     json_data={}
     try:
@@ -102,13 +102,15 @@ def get_dealer_reviews_from_cf(url, dealer_id):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
 def analyze_review_sentiments(dealerreview, **kwargs):
-    API_KEY="WbXok1AVEWObyUaG939TGwSk6NfCSwrw42-lSw62ETmz"
+    API_KEY="MxFCXuNdAY4i7RdB1PTx0LGspyMbNVmVOKxtpJ5XPxkz"
     #API_KEY="0614ccd0-1e9f-4d49-923e-e7741f963747:Q3ZX2R1b3oBEb0XebEO99rpulJ31yoY7X5GfjoQykN4RpM9eThYrrs14If0aOHtG"
-    URL="https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/fc2b8a7f-4e6b-4f85-83af-5ef1506cad53"
-    response = get_request(URL,text=dealerreview, version="2020-08-01", features="sentiment",apikey=API_KEY)
+    NLU_URL='https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/93a549ab-8f15-404e-a8ed-97f6fb8a35aa/v1/analyze?version=2020-08-01'
+    params = json.dumps({"text": dealerreview, "features": {"sentiment": {}}})
+    response = requests.post(NLU_URL,data=params,headers={'Content-Type':'application/json'},auth=HTTPBasicAuth("apikey", API_KEY))
     
-    print(response)
-    if "label" in response:
-        return response["label"]
-    else:
-        return "Unknown"
+    #print(response.json())
+    try:
+        sentiment=response.json()['sentiment']['document']['label']
+        return sentiment
+    except:
+        return "unknown"
