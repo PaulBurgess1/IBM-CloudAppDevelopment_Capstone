@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer, DealerReview
-from .restapis import get_dealers_from_cf,get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf,get_dealer_reviews_from_cf,post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -121,6 +121,29 @@ def get_dealer_details(request, dealer_id):
     dealer_details = get_dealer_reviews_from_cf(url,dealer_id)
     return HttpResponse(dealer_details)
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
-
+def add_review(request, dealer_id):
+    context = {}
+    # If it is a GET request, just render the add_review page
+    if request.method == 'GET':
+        context["dealer_id"] = dealer_id
+        return render(request, 'djangoapp/add_review.html', context)
+    elif request.method == 'POST':
+        if (request.user.is_authenticated):
+            review = dict()
+            review["id"]=0#placeholder
+            review["name"]=request.POST["name"]
+            review["dealership"]=dealer_id
+            review["review"]=request.POST["review"]
+            review["purchase"]=request.POST["purchase"]
+            review["purchase_date"]=request.POST["purchase_date"]if params["purchase"] == True else None
+            review["car_make"]=request.POST["car_make"]if params["purchase"] == True else None
+            review["car_model"]=request.POST["car_model"]if params["purchase"] == True else None
+            review["car_year"]=request.POST["car_year"]if params["purchase"] == True else None
+            json_result = post_request("https://08663624.us-south.apigw.appdomain.cloud/api/review", review, dealerId=dealer_id)
+            print(json_result)
+            if json_result["status"] != 200:
+                context["message"] = "ERROR: Review was not submitted."
+            else:
+                context["message"] = "Review was submited"
+        context["dealer_id"] = dealer_id
+        return render(request, 'djangoapp/add_review.html', context)
