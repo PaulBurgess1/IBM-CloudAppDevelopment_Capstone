@@ -29,7 +29,7 @@ def get_request(url, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
-def post_request(url, payload, kwargs):
+def post_request(url, payload, **kwargs):
     print(url)
     print(payload)
     print(kwargs)
@@ -113,4 +113,4 @@ def analyze_review_sentiments(dealerreview, **kwargs):
         sentiment=response.json()['sentiment']['document']['label']
         return sentiment
     except:
-        return "unknown"
+        return "neutral"
