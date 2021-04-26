@@ -12,7 +12,11 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 
 </head>
-
+{% if message %}
+    <script>
+        alert('{{ message }}');
+    </script>
+{%endif%}
     <body>
     <!--Header and Navbar -->
     <header class="pb-5">
@@ -75,5 +79,6 @@
   $(function() {
     $('#table').bootstrapTable()
   })
+  
 </script>
 </html>

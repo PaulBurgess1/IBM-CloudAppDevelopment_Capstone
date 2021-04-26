@@ -14,16 +14,45 @@
 </head>
 
     <body>
+    {% if message %}
+    <script>
+        alert('{{ message }}');
+    </script>
+{%endif%}
+    <body>
     <!--Header and Navbar -->
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark static-top bg-dark">
-            <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars &#128663;</a>
+    <header class="pb-5">
+        <nav class=" navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <a class=" navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars &#128663;</a>
+            {% if user.is_authenticated %}
+            <div class="ml-auto">
+                <a class="h6 mr-2 text-light">Welcome, {{user.username}}</a>
+                <a class="btn btn-outline-danger btn-sm" type="button" href="{% url 'djangoapp:logout' %}">Logout</a>
+            </div> 
+            {% else %}
+            <form action="{% url 'djangoapp:login' %}"  method="post" class="ml-auto">
+                {% csrf_token %}<!--Important do not touch-->
+                <input class="" type="text" id="username" name="username" placeholder="UserName:">
+                <input type="password" id="pword" name="pword" placeholder="Password:">
+                <input class="btn btn-outline-success btn-sm" type="submit" value="Login">
+                <a class="btn btn-outline-warning btn-sm" type="submit" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+            </form>
+            {% endif %}
         </nav>
     </header>
-    <main role="main" class="container">
-        <p class="mt-3">
-            Welcome to Best Cars dealership, home to the best cars in North America. We sell domestic and imported cars at reasonable prices. 
-        </p>
+    <main role="main" class="container mt-3">
+        <div class="card ">
+                        <div class="card-header">
+                            <h5 class="card-title text-center pt-1">About Us!</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <p class="card-text">
+                                Welcome to Best Cars dealership, home to the best cars in North America. 
+                            </p>
+                            <p class="card-text">We sell domestic and imported cars at reasonable prices.</p>
+                        </div>
+        </div>
+        
     </main>
     
 
