@@ -139,11 +139,11 @@ def add_review(request, dealer_id):
     context = {}
     # If it is a GET request, just render the add_review page
     if request.method == 'GET':
-        url = "https://08663624.us-south.apigw.appdomain.cloud/api/dealership?dealerId="+str(dealer_id)
+        url = "https://08663624.us-south.apigw.appdomain.cloud/api/dealership"
         # Get dealers from the URL
         context = {
             "dealer_id": dealer_id,
-            "dealer_name": get_dealers_from_cf(url)[0].full_name,
+            "dealer_name": get_dealers_from_cf(url)[dealer_id-1].full_name,
             "cars": CarModel.objects.all()
         }
         #print(context)
